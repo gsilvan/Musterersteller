@@ -19,7 +19,7 @@ try {
   });
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto(process.env.APP_URL || 'http://127.0.0.1:5173/');
+  await page.goto(new URL('muster/', process.env.APP_URL || 'http://127.0.0.1:5173/').href);
   await page.locator('.upper-canvas').waitFor();
   const exports = await page.evaluate(async () => {
     const { banderoleSvg, banderolePdf } = await import('/src/studio/banderoleExport.ts');
@@ -258,7 +258,7 @@ try {
   console.log('PDF/SVG pixel difference:', pdfDifference);
   assert.ok(pdfDifference < 1.5, 'PDF and SVG must preserve the same scene');
   console.log('UI checks');
-  await page.getByRole('button', { name: 'Verpackungen', exact: true }).click();
+  await page.getByRole('link', { name: 'Verpackungen', exact: true }).click();
   await page.locator('.packMarks line').first().waitFor({ state: 'attached' });
   console.log('Editor/export pixel difference:', await compareScene());
   assert.ok((await compareScene()) < 1.5, 'Editor and SVG must match');
@@ -337,7 +337,7 @@ try {
     ...saved,
     pages: [{ ...saved.pages[0], bleedMm: 3 }],
   });
-  await page.getByRole('button', { name: 'Verpackungen', exact: true }).click();
+  await page.getByRole('link', { name: 'Verpackungen', exact: true }).click();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('button', { name: 'Verpackung einpassen', exact: true }).click();
   const mobileDifference = await compareScene();

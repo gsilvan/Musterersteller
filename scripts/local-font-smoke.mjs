@@ -15,14 +15,14 @@ try {
     viewport: { width: 1200, height: 850 },
     acceptDownloads: true,
   });
-  await page.goto(process.env.APP_URL || 'http://127.0.0.1:5173/');
+  await page.goto(new URL('muster/', process.env.APP_URL || 'http://127.0.0.1:5173/').href);
   await page.locator('.upper-canvas').waitFor();
   await page.evaluate(() => {
     window.queryLocalFonts = async () => {
       throw new Error('denied');
     };
   });
-  await page.getByRole('button', { name: 'Verpackungen', exact: true }).click();
+  await page.getByRole('link', { name: 'Verpackungen', exact: true }).click();
   assert.equal(await page.locator('.iconChoices').count(), 0);
   assert.equal(await page.getByLabel('Beschnitt (mm)').count(), 0);
   await page.getByRole('button', { name: 'Text hinzufügen', exact: true }).click();
@@ -103,7 +103,7 @@ try {
   await page.getByRole('button', { name: 'Schließen', exact: true }).click();
   await page.reload();
   await page.locator('.upper-canvas').waitFor();
-  await page.getByRole('button', { name: 'Verpackungen', exact: true }).click();
+  await page.getByRole('link', { name: 'Verpackungen', exact: true }).click();
   await page.locator('.layerName').filter({ hasText: 'Neuer Text' }).click();
   assert.equal(await postscriptName(), 'Kundenfont-Bold');
   assert.ok(await page.getByText(/Diese Schrift ist noch nicht freigegeben/).isVisible());

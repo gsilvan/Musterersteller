@@ -15,7 +15,7 @@ const browser = await chromium.launch({
 });
 try {
   const page = await browser.newPage({ viewport: { width: 1200, height: 850 } });
-  await page.goto(process.env.APP_URL || 'http://127.0.0.1:5173/');
+  await page.goto(new URL('muster/', process.env.APP_URL || 'http://127.0.0.1:5173/').href);
   await page.locator('.upper-canvas').waitFor();
   const results = await page.evaluate(async () => {
     const { packagingSvg, packagingPdf } = await import('/src/studio/banderoleExport.ts');

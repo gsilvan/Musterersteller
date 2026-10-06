@@ -44,6 +44,34 @@ import {
 const backgrounds = Object.values(
   import.meta.glob('../backgrounds/*.png', { eager: true, query: '?url', import: 'default' }),
 ) as string[];
+type EditorTab = 'pattern' | 'packaging';
+const routeInfo = {
+  pattern: {
+    path: 'muster/',
+    title: 'Rapportmuster online erstellen | Musterersteller',
+    description:
+      'Erstelle nahtlose Rapportmuster und Endlosmuster im Browser. Motive platzieren, Kachel und Druckfläche in cm festlegen und als PNG oder PDF exportieren.',
+  },
+  packaging: {
+    path: 'verpackung/',
+    title: 'Verpackungen und Banderolen gestalten | Musterersteller',
+    description:
+      'Gestalte Banderolen und Verpackungen online mit Vorlagen, eigenen Bildern und Text. Exportiere druckfertige PDF- oder bearbeitbare SVG-Dateien.',
+  },
+} satisfies Record<EditorTab, { path: string; title: string; description: string }>;
+function tabFromPath(): EditorTab {
+  return window.location.pathname.replace(/\/$/, '').endsWith('/verpackung')
+    ? 'packaging'
+    : 'pattern';
+}
+function syncRouteMetadata(tab: EditorTab) {
+  const route = routeInfo[tab];
+  document.title = route.title;
+  document.querySelector('meta[name="description"]')?.setAttribute('content', route.description);
+  document
+    .querySelector('link[rel="canonical"]')
+    ?.setAttribute('href', `https://musterersteller.de/${route.path}`);
+}
 type NumberFieldProps = {
   label: string;
   value: number;
@@ -148,7 +176,7 @@ export function App() {
     selectedId = useStudio((s) => s.selectedId),
     selectedIds = useStudio((s) => s.selectedIds),
     select = useStudio((s) => s.select);
-  const [tab, setTab] = useState<'pattern' | 'packaging'>('pattern'),
+  const [tab, setTab] = useState<EditorTab>(tabFromPath),
     [toolsOpen, setToolsOpen] = useState(false),
     [showExport, setShowExport] = useState(false),
     [session, setSession] = useState(0),
@@ -195,6 +223,22 @@ export function App() {
     window.addEventListener('beforeunload', flush);
     return () => window.removeEventListener('beforeunload', flush);
   }, []);
+  useEffect(() => {
+    const onPopState = () => {
+      const nextTab = tabFromPath();
+      setTab(nextTab);
+      syncRouteMetadata(nextTab);
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+  function navigateTo(nextTab: EditorTab) {
+    if (nextTab === tab) return;
+    window.history.pushState(null, '', `${import.meta.env.BASE_URL}${routeInfo[nextTab].path}`);
+    setTab(nextTab);
+    syncRouteMetadata(nextTab);
+    setToolsOpen(false);
+  }
   useEffect(() => {
     setFontError('');
   }, [packagingSelection]);
@@ -340,7 +384,7 @@ export function App() {
     try {
       await newSession();
       resetWorkspaceViews();
-      setTab('pattern');
+      navigateTo('pattern');
       setToolsOpen(false);
       setSession((n) => n + 1);
       setPpi(300);
@@ -480,7 +524,9 @@ export function App() {
   return (
     <div className="appShell">
       <header className="topbar">
-        <span className="brand">Musterersteller</span>
+        <a className="brand" href={import.meta.env.BASE_URL}>
+          Musterersteller
+        </a>
         <details className="projectMenu">
           <summary>Projekt</summary>
           <div className="menuPanel">
@@ -536,12 +582,30 @@ export function App() {
           </button>
         </div>
         <nav aria-label="Arbeitsbereich">
-          <button aria-pressed={tab === 'pattern'} onClick={() => setTab('pattern')}>
+          <a
+            href={`${import.meta.env.BASE_URL}${routeInfo.pattern.path}`}
+            aria-current={tab === 'pattern' ? 'page' : undefined}
+            onClick={(event) => {
+              if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+                return;
+              event.preventDefault();
+              navigateTo('pattern');
+            }}
+          >
             Muster
-          </button>
-          <button aria-pressed={tab === 'packaging'} onClick={() => setTab('packaging')}>
+          </a>
+          <a
+            href={`${import.meta.env.BASE_URL}${routeInfo.packaging.path}`}
+            aria-current={tab === 'packaging' ? 'page' : undefined}
+            onClick={(event) => {
+              if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+                return;
+              event.preventDefault();
+              navigateTo('packaging');
+            }}
+          >
             Verpackungen
-          </button>
+          </a>
         </nav>
         <div className="headerActions">
           <button
