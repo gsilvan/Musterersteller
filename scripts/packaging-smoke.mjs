@@ -49,9 +49,9 @@ try {
   const pixels = () => page.locator('.lower-canvas').evaluate((el) => el.toDataURL());
   const select = (name) => page.locator('.layerName').filter({ hasText: name }).click();
   const layer = async () => (await state()).project.packagingDocuments.banderole.pages[0].layers[0];
-  await page.goto(process.env.APP_URL || 'http://127.0.0.1:5173/');
+  await page.goto(new URL('muster/', process.env.APP_URL || 'http://127.0.0.1:5173/').href);
   await page.locator('.upper-canvas').waitFor();
-  await page.getByRole('button', { name: 'Verpackungen', exact: true }).click();
+  await page.getByRole('link', { name: 'Verpackungen', exact: true }).click();
   const addActions = page.locator('.layersSection .layerAddActions');
   assert.equal(await addActions.count(), 1);
   const [textAction, imageAction] = await Promise.all([
@@ -163,20 +163,20 @@ try {
         (bounds.width / 2 - afterWheel.x) / afterWheel.scale,
     ) < 0.01,
   );
-  await page.getByRole('button', { name: 'Muster', exact: true }).click();
-  await page.getByRole('button', { name: 'Verpackungen', exact: true }).click();
+  await page.getByRole('link', { name: 'Muster', exact: true }).click();
+  await page.getByRole('link', { name: 'Verpackungen', exact: true }).click();
   assert.deepEqual(await camera(), afterWheel);
   await page.locator('.viewMenu summary').click();
   await page.getByRole('button', { name: 'Bildschirm kalibrieren', exact: true }).click();
   await page.getByRole('textbox', { name: 'Gemessene Länge (cm)' }).fill('4');
   await page.getByRole('button', { name: 'Originalgröße anzeigen', exact: true }).click();
   assert.ok(Math.abs((await camera()).scale - (96 / 25.4) * 1.25) < 0.001);
-  await page.getByRole('button', { name: 'Muster', exact: true }).click();
+  await page.getByRole('link', { name: 'Muster', exact: true }).click();
   await page.locator('.viewMenu summary').click();
   await page.getByRole('button', { name: 'Ungefähre Originalgröße', exact: true }).click();
   const patternScale = await page.locator('.canvasViewport').getAttribute('data-scale');
   assert.ok(Math.abs(+patternScale - (96 / 25.4) * 1.25) < 0.001);
-  await page.getByRole('button', { name: 'Verpackungen', exact: true }).click();
+  await page.getByRole('link', { name: 'Verpackungen', exact: true }).click();
   await page.getByRole('button', { name: 'Verpackung einpassen', exact: true }).click();
   await page.getByRole('button', { name: 'Auswählen', exact: true }).click();
   await select('Neuer Text');
@@ -242,7 +242,7 @@ try {
     (await state()).project.packagingDocuments.banderole.pages[0].layers[0].text,
     'Danach rechts\nÄÖÜ ß',
   );
-  await page.getByRole('button', { name: 'Verpackungen', exact: true }).click();
+  await page.getByRole('link', { name: 'Verpackungen', exact: true }).click();
 
   // Validate every example's real rendered text dimensions, not estimates.
   const examples = await page.evaluate(async () => {
@@ -425,7 +425,7 @@ try {
   await page.locator('.upper-canvas').waitFor();
   assert.equal((await cartonPage()).background, '#f0e8dc');
   assert.ok(Math.abs((await cartonPage()).layers[0].xMm - originalX - 10) < 0.01);
-  await page.getByRole('button', { name: 'Verpackungen', exact: true }).click();
+  await page.getByRole('link', { name: 'Verpackungen', exact: true }).click();
   await page.getByRole('combobox', { name: 'Verpackungsart' }).selectOption('carton');
   await page.getByRole('button', { name: 'Exportieren', exact: true }).click();
   await page.getByRole('combobox', { name: 'PDF-Seiten der Faltschachtel' }).selectOption('1');

@@ -3,14 +3,163 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Muster für Bienenwachstücher gestalten | Musterersteller</title>
+    <title>Rapportmuster &amp; Endlosmuster online erstellen | Musterersteller</title>
     <meta
       name="description"
-      content="Gestalte nahtlose Muster für Bienenwachstücher im Browser. Passe Kachel- und Tuchgröße in Zentimetern an und exportiere dein Design als PNG oder PDF."
+      content="Erstelle nahtlose Rapportmuster und Endlosmuster online. Lade eigene Motive hoch, gestalte wiederholbare Muster und exportiere sie als PNG oder PDF. Kostenlos im Browser starten."
     />
+    <link rel="canonical" href="https://musterersteller.de/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:title" content="Rapportmuster &amp; Endlosmuster online erstellen" />
+    <meta
+      property="og:description"
+      content="Eigene Motive hochladen, nahtlose Muster gestalten und als PNG oder PDF exportieren."
+    />
+    <meta property="og:url" content="https://musterersteller.de/" />
+    <link rel="stylesheet" href="/src/landing.css" />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <header class="siteHeader">
+      <div class="headerInner">
+        <a class="wordmark" href="./" aria-label="Musterersteller – Startseite">Musterersteller</a>
+        <nav aria-label="Hauptnavigation">
+          <a href="./muster/">Muster erstellen</a>
+          <a href="./verpackung/">Verpackungen</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="hero" aria-labelledby="heroTitle">
+        <div class="heroText">
+          <p class="eyebrow">Online-Werkzeug für nahtlose Muster</p>
+          <h1 id="heroTitle">Rapportmuster und Endlosmuster erstellen</h1>
+          <p class="lead">
+            Gestalte aus eigenen Motiven ein wiederholbares Muster – direkt im Browser. Passe die
+            Kachel an, sieh den Rapport auf einer durchgehenden Fläche und exportiere dein Design
+            für den Druck.
+          </p>
+          <div class="heroActions">
+            <a class="button primary" href="./muster/">Muster erstellen</a>
+            <a class="button secondary" href="./verpackung/">Verpackung gestalten</a>
+          </div>
+          <p class="heroNote">Ohne Anmeldung · Bearbeitung und Export im Browser</p>
+        </div>
+        <figure class="heroExample">
+          <div class="heroPattern">
+            <img
+              src="/src/backgrounds/Design_02.png"
+              alt="Beispiel eines nahtlosen Bienenmusters auf gelbem Hintergrund"
+              width="800"
+              height="800"
+              fetchpriority="high"
+            />
+          </div>
+          <figcaption>Beispiel für ein wiederholbares Muster</figcaption>
+        </figure>
+      </section>
+
+      <section class="contentSection" aria-labelledby="howTitle">
+        <div class="sectionHeading">
+          <p class="eyebrow">So funktioniert es</p>
+          <h2 id="howTitle">Vom Motiv zur druckbaren Fläche</h2>
+        </div>
+        <div class="steps">
+          <article>
+            <span class="stepNumber">01</span>
+            <h3>Motive hinzufügen</h3>
+            <p>
+              Lade Bilder oder Logos hoch und platziere sie direkt im Muster. Größe, Drehung und
+              Ebenen lassen sich anpassen.
+            </p>
+          </article>
+          <article>
+            <span class="stepNumber">02</span>
+            <h3>Rapport gestalten</h3>
+            <p>
+              Lege die Kachelgröße in Zentimetern fest. Das Muster wiederholt sich sichtbar über die
+              gesamte Arbeitsfläche.
+            </p>
+          </article>
+          <article>
+            <span class="stepNumber">03</span>
+            <h3>Design exportieren</h3>
+            <p>
+              Bestimme die Größe der Druckfläche und lade das fertige Muster als PNG oder PDF
+              herunter – oder nur die Kachel als PNG.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="contentSection examplesSection" aria-labelledby="examplesTitle">
+        <div class="sectionHeading">
+          <p class="eyebrow">Beispiele</p>
+          <h2 id="examplesTitle">Muster mit unterschiedlichem Charakter</h2>
+          <p>
+            Diese Designs sind als Hintergründe im Musterersteller verfügbar. Du kannst auch eigene
+            Bilder verwenden und daraus einen Endlosrapport aufbauen.
+          </p>
+        </div>
+        <div class="exampleGrid">
+          <figure>
+            <img
+              src="/src/backgrounds/Design_01.png"
+              alt="Florales Muster mit Blüten und Blättern"
+              width="600"
+              height="600"
+              loading="lazy"
+            />
+            <figcaption>Florales Muster</figcaption>
+          </figure>
+          <figure>
+            <img
+              src="/src/backgrounds/Design_07.png"
+              alt="Wiederholtes Muster mit Äpfeln und Birnen"
+              width="600"
+              height="600"
+              loading="lazy"
+            />
+            <figcaption>Fruchtmuster</figcaption>
+          </figure>
+          <figure>
+            <img
+              src="/src/backgrounds/Design_06.png"
+              alt="Abstraktes Endlosmuster in Rosa und Blau"
+              width="600"
+              height="600"
+              loading="lazy"
+            />
+            <figcaption>Abstraktes Muster</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="contentSection useSection" aria-labelledby="useTitle">
+        <div>
+          <p class="eyebrow">Für Muster und Verpackung</p>
+          <h2 id="useTitle">Ein Entwurf, mehrere Druckdateien</h2>
+          <p>
+            Der Musterersteller eignet sich zum Beispiel für Bienenwachstücher und andere bedruckte
+            Flächen. Du kannst die Maße von Kachel und Druckfläche getrennt einstellen, Entwürfe
+            lokal speichern und später weiterbearbeiten.
+          </p>
+          <p>
+            Für passende Banderolen und Verpackungen gibt es einen eigenen Arbeitsbereich mit
+            Vorlagen, Text- und Bildebenen sowie PDF- und SVG-Export.
+          </p>
+          <a class="textLink" href="./verpackung/">Verpackungen gestalten →</a>
+        </div>
+        <div class="useAction">
+          <h3>Jetzt ein Rapportmuster erstellen</h3>
+          <p>Öffne die Arbeitsfläche und beginne mit deinem Motiv oder einem Hintergrund.</p>
+          <a class="button primary" href="./muster/">Zum Musterersteller</a>
+        </div>
+      </section>
+    </main>
+    <footer class="siteFooter">
+      <span>© Musterersteller</span>
+      <a href="./impressum.html">Impressum</a>
+    </footer>
   </body>
 </html>

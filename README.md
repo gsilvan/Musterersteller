@@ -2,6 +2,8 @@
 
 Browser-based editor for seamless beeswax-wrap patterns and their packaging.
 
+The static landing page is at `/`. The pattern editor opens at `/muster/` and the packaging editor at `/verpackung/`. Each route has its own HTML entry, title, description and canonical URL so direct links also work on GitHub Pages. The domain sitemap is in `public/sitemap.xml`.
+
 ## Development
 
 Node 20.19+ is required.

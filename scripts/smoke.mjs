@@ -58,7 +58,7 @@ try {
     await page.getByRole('button', { name: 'Schließen', exact: true }).click();
     return bytes;
   };
-  await page.goto(process.env.APP_URL || 'http://127.0.0.1:5173/');
+  await page.goto(new URL('muster/', process.env.APP_URL || 'http://127.0.0.1:5173/').href);
   await page.locator('.upper-canvas').waitFor();
   assert.equal(await page.getByText('Automatisch anordnen', { exact: true }).count(), 0);
   assert.equal(
@@ -271,7 +271,7 @@ try {
     .getByLabel('Motiv hochladen', { exact: true })
     .setInputFiles({ name: 'artwork.pdf', mimeType: 'application/pdf', buffer: pdf });
   await page.getByRole('status').filter({ hasText: 'Fertig.' }).waitFor({ timeout: 20000 });
-  await page.getByRole('button', { name: 'Verpackungen', exact: true }).click();
+  await page.getByRole('link', { name: 'Verpackungen', exact: true }).click();
   await page.locator('.packCanvasHost').waitFor();
   await page.getByRole('button', { name: 'Beispiel laden', exact: true }).first().click();
   await page
@@ -311,7 +311,7 @@ try {
   assert.equal(bandBytes.subarray(0, 4).toString(), '%PDF');
   assert.match(bandBytes.toString('latin1'), /\/Count\s+1\b/);
   await page.getByRole('button', { name: 'Schließen', exact: true }).click();
-  await page.getByRole('button', { name: 'Muster', exact: true }).click();
+  await page.getByRole('link', { name: 'Muster', exact: true }).click();
   // A new session clears document/history and resets the view. Opening old ZIPs still works.
   const beforeNewProject = await state();
   await page.getByRole('button', { name: 'Neues Projekt', exact: true }).click();
@@ -452,7 +452,7 @@ try {
     };
     Object.defineProperty(navigator, 'gpu', { value: undefined, configurable: true });
   });
-  await fallback.goto(process.env.APP_URL || 'http://127.0.0.1:5173/');
+  await fallback.goto(new URL('muster/', process.env.APP_URL || 'http://127.0.0.1:5173/').href);
   await fallback
     .getByLabel('Motiv hochladen', { exact: true })
     .setInputFiles({ name: 'Blatt.svg', mimeType: 'image/svg+xml', buffer: artwork });
