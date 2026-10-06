@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Musterersteller: wiederholtes Raster aus farbigen Quadraten">
+  <rect width="64" height="64" rx="6" fill="#27303d"/>
+  <g fill="#245cc5">
+    <path d="M3 3h10v10H3zM27 3h10v10H27zM51 3h10v10H51zM3 27h10v10H3zM27 27h10v10H27zM51 27h10v10H51zM3 51h10v10H3zM27 51h10v10H27zM51 51h10v10H51z"/>
+  </g>
+  <g fill="#ffcc4e">
+    <path d="M15 3h10v10H15zM39 3h10v10H39zM15 27h10v10H15zM39 27h10v10H39zM15 51h10v10H15zM39 51h10v10H39z"/>
+  </g>
+  <g fill="#4fb7a5">
+    <path d="M3 15h10v10H3zM27 15h10v10H27zM51 15h10v10H51zM3 39h10v10H3zM27 39h10v10H27zM51 39h10v10H51z"/>
+  </g>
+  <g fill="#dceafa">
+    <path d="M15 15h10v10H15zM39 15h10v10H39zM15 39h10v10H15zM39 39h10v10H39z"/>
+  </g>
+</svg>
