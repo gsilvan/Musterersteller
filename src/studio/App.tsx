@@ -1472,7 +1472,7 @@ export function App() {
       <footer className="statusbar">
         <span role="status">{message || 'Bereit'}</span>
         {busy && <button onClick={() => activeExport.current?.abort()}>Abbrechen</button>}
-        <a className="legalLink" href={`${import.meta.env.BASE_URL}impressum.html`}>
+        <a className="legalLink" href={`${import.meta.env.BASE_URL}impressum/`}>
           Impressum
         </a>
       </footer>

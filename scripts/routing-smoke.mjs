@@ -45,7 +45,24 @@ try {
   assert.match(await direct.title(), /Verpackungen und Banderolen/);
   await direct.close();
 
+  await page.getByRole('link', { name: 'Impressum', exact: true }).click();
+  assert.equal(new URL(page.url()).pathname, new URL('impressum/', baseUrl).pathname);
+  assert.equal(await page.getByRole('heading', { name: 'Impressum', level: 1 }).count(), 1);
+  assert.equal(await page.getByText('Bergtuch GmbH').count(), 1);
+  assert.equal(await page.locator('.siteHeader nav a').count(), 2);
+  assert.equal(await page.locator('.siteFooter').count(), 1);
+  assert.equal(
+    await page.locator('link[rel="canonical"]').getAttribute('href'),
+    'https://musterersteller.de/impressum/',
+  );
+  await page.getByRole('link', { name: 'Musterersteller – Startseite' }).click();
+  assert.equal(new URL(page.url()).pathname, new URL(baseUrl).pathname);
+
+  await page.goto(new URL('impressum.html', baseUrl).href);
+  await page.waitForURL(new URL('impressum/', baseUrl).href);
+
   await page.setViewportSize({ width: 390, height: 844 });
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   await page.goto(baseUrl);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   assert.equal(errors.length, 0, errors.join('\n'));
