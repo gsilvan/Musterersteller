@@ -77,6 +77,35 @@ try {
   await field('Kachelbreite', 10);
   await field('Kachelhöhe', 10);
   assert.equal(await page.locator('[data-testid=sheet-guide]').count(), 1);
+  const checkRulers = async () => {
+    const target = await point(40, 60);
+    await page.mouse.move(target.x, target.y);
+    await page.waitForFunction(() => document.querySelectorAll('.rulerPointer').length === 2);
+    const geometry = await page.locator('.canvasViewport').evaluate((el) => {
+      const top = document.querySelector('.rulerTop');
+      const right = document.querySelector('.rulerRight');
+      const zero = (ruler) =>
+        [...ruler.querySelectorAll('text')]
+          .find((text) => text.textContent === '0')
+          ?.parentElement.querySelector('line');
+      return {
+        x: Number(top.querySelector('.rulerPointer').getAttribute('x1')),
+        y: Number(right.querySelector('.rulerPointer').getAttribute('y1')),
+        zeroX: Number(zero(top)?.getAttribute('x1')),
+        zeroY: Number(zero(right)?.getAttribute('y1')),
+        originX: Number(el.dataset.offsetX),
+        originY: Number(el.dataset.offsetY),
+        scale: Number(el.dataset.scale),
+      };
+    });
+    assert.ok(Math.abs(geometry.x - geometry.originX - 40 * geometry.scale) < 1);
+    assert.ok(Math.abs(geometry.y - geometry.originY - 60 * geometry.scale) < 1);
+    assert.ok(Math.abs(geometry.zeroX - geometry.originX) < 0.01);
+    assert.ok(Math.abs(geometry.zeroY - geometry.originY) < 0.01);
+    await page.mouse.move(5, 5);
+    await page.waitForFunction(() => document.querySelectorAll('.rulerPointer').length === 0);
+  };
+  await checkRulers();
   const artwork = Buffer.from(
     '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><path d="M40 360Q-20 0 360 40Q400 400 40 360" fill="#2a8269"/><path d="M40 360L260 140" stroke="#fff" stroke-width="12"/></svg>',
   );
@@ -93,6 +122,7 @@ try {
   await page.getByRole('button', { name: 'Ansicht verschieben', exact: true }).click();
   await drag(70, 70, 30, 15);
   await page.getByRole('button', { name: 'Vergrößern', exact: true }).click();
+  await checkRulers();
   await page.locator('.viewMenu summary').click();
   await page.getByLabel('Tuchrahmen', { exact: true }).uncheck();
   await page.getByRole('checkbox', { name: 'Kachelgrenzen', exact: true }).uncheck();
@@ -457,11 +487,12 @@ try {
     .getByLabel('Motiv hochladen', { exact: true })
     .setInputFiles({ name: 'Blatt.svg', mimeType: 'image/svg+xml', buffer: artwork });
   await fallback.getByRole('status').filter({ hasText: 'Fertig.' }).waitFor();
+  // Sample the green leaf away from its white diagonal centre stroke.
   await fallback.waitForFunction(() => {
     const host = document.querySelector('.canvasViewport'),
       canvas = [...document.querySelectorAll('.patternSurface canvas')].at(-1);
     if (!host || !canvas) return false;
-    const x = Number(host.dataset.offsetX) + 30 * Number(host.dataset.scale),
+    const x = Number(host.dataset.offsetX) + 34 * Number(host.dataset.scale),
       y = Number(host.dataset.offsetY) + 30 * Number(host.dataset.scale);
     const pixel = canvas.getContext('2d').getImageData(Math.round(x), Math.round(y), 1, 1).data;
     return pixel[1] > pixel[0] * 1.5 && pixel[3] === 255;
@@ -470,7 +501,7 @@ try {
   await fallback.waitForFunction(() => {
     const host = document.querySelector('.canvasViewport'),
       canvas = [...document.querySelectorAll('.patternSurface canvas')].at(-1);
-    const x = Number(host.dataset.offsetX) + 30 * Number(host.dataset.scale),
+    const x = Number(host.dataset.offsetX) + 34 * Number(host.dataset.scale),
       y = Number(host.dataset.offsetY) + 30 * Number(host.dataset.scale);
     const pixel = canvas.getContext('2d').getImageData(Math.round(x), Math.round(y), 1, 1).data;
     return pixel[0] > 240 && pixel[1] > 240;

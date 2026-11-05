@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Rulers } from './Rulers';
 import { Editor } from './Editor';
 import { PatternSurface } from './PatternSurface';
 import { useStudio } from './store';
@@ -41,53 +42,63 @@ export function Workspace() {
           Tuchrahmen
         </label>
       </ViewToolbar>
-      <div
-        className="canvasViewport"
-        ref={host}
-        data-scale={view.scale}
-        data-offset-x={view.x}
-        data-offset-y={view.y}
-      >
-        {size.width > 1 && (
-          <>
-            <PatternSurface view={view} {...size} />
-            <Editor view={view} {...size} hand={hand} onView={setView} />
-          </>
-        )}
-        <svg
-          className="guides"
-          width={size.width}
-          height={size.height}
-          aria-label={sheet ? label : 'Kachelgrenzen'}
+      <div className="ruledWorkspace">
+        <Rulers host={host} view={view} {...size} />
+        <div
+          className="canvasViewport"
+          ref={host}
+          data-scale={view.scale}
+          data-offset-x={view.x}
+          data-offset-y={view.y}
         >
-          <path d={lines.join('')} className="tileGuideHalo" />
-          <path d={lines.join('')} className="tileGuide" />
-          {sheet && (
-            <g data-testid="sheet-guide">
-              <rect
-                className="sheetGuideHalo"
-                x={view.x}
-                y={view.y}
-                width={project.sheetWidthMm * view.scale}
-                height={project.sheetHeightMm * view.scale}
-              />
-              <rect
-                className="sheetGuide"
-                x={view.x}
-                y={view.y}
-                width={project.sheetWidthMm * view.scale}
-                height={project.sheetHeightMm * view.scale}
-              />
-              <rect fill="#253447" x={view.x - 1} y={view.y - 23} width={190} height={23} rx={2} />
-              <text x={view.x + 7} y={view.y - 8} fill="white" fontSize={11}>
-                {label}
-              </text>
-            </g>
+          {size.width > 1 && (
+            <>
+              <PatternSurface view={view} {...size} />
+              <Editor view={view} {...size} hand={hand} onView={setView} />
+            </>
           )}
-        </svg>
-        {!project.motifs.length && !project.backgroundAssetId && (
-          <div className="emptyCanvas">Motiv über „Motiv hochladen“ hinzufügen.</div>
-        )}
+          <svg
+            className="guides"
+            width={size.width}
+            height={size.height}
+            aria-label={sheet ? label : 'Kachelgrenzen'}
+          >
+            <path d={lines.join('')} className="tileGuideHalo" />
+            <path d={lines.join('')} className="tileGuide" />
+            {sheet && (
+              <g data-testid="sheet-guide">
+                <rect
+                  className="sheetGuideHalo"
+                  x={view.x}
+                  y={view.y}
+                  width={project.sheetWidthMm * view.scale}
+                  height={project.sheetHeightMm * view.scale}
+                />
+                <rect
+                  className="sheetGuide"
+                  x={view.x}
+                  y={view.y}
+                  width={project.sheetWidthMm * view.scale}
+                  height={project.sheetHeightMm * view.scale}
+                />
+                <rect
+                  fill="#253447"
+                  x={view.x - 1}
+                  y={view.y - 23}
+                  width={190}
+                  height={23}
+                  rx={2}
+                />
+                <text x={view.x + 7} y={view.y - 8} fill="white" fontSize={11}>
+                  {label}
+                </text>
+              </g>
+            )}
+          </svg>
+          {!project.motifs.length && !project.backgroundAssetId && (
+            <div className="emptyCanvas">Motiv über „Motiv hochladen“ hinzufügen.</div>
+          )}
+        </div>
       </div>
     </div>
   );
