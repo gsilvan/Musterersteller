@@ -117,7 +117,7 @@ function NumberField({ label, value, onChange, min, max, step, unit }: NumberFie
   };
   return (
     <label className={`field ${invalid ? 'invalid' : ''}`}>
-      <span>{label}</span>
+      <span>{label === 'Position X' ? 'X' : label === 'Position Y' ? 'Y' : label}</span>
       <input
         type="text"
         inputMode="decimal"
@@ -644,7 +644,67 @@ export function App() {
         <div className="workspace">
           {tab === 'pattern' ? (
             ready ? (
-              <Workspace key={session} />
+              <Workspace
+                key={session}
+                transformations={
+                  <fieldset
+                    disabled={!selected || selectedIds.length !== 1 || selected.locked}
+                    key={selectedId ?? 'none'}
+                  >
+                    {selected && selectedIds.length === 1 ? (
+                      <>
+                        {editNumber(
+                          'Position X',
+                          selected.xMm / 10,
+                          (n) => changeMotif((m) => ({ ...m, xMm: cmToMm(n) })),
+                          -100,
+                          100,
+                        )}
+                        {editNumber(
+                          'Position Y',
+                          selected.yMm / 10,
+                          (n) => changeMotif((m) => ({ ...m, yMm: cmToMm(n) })),
+                          -100,
+                          100,
+                        )}
+                        {editNumber(
+                          'Motivbreite',
+                          selected.widthMm / 10,
+                          (n) =>
+                            changeMotif((m) => ({
+                              ...m,
+                              widthMm: cmToMm(n),
+                              heightMm: (cmToMm(n) * m.heightMm) / m.widthMm,
+                            })),
+                          0.2,
+                          100,
+                        )}
+                        {editNumber(
+                          'Drehung',
+                          selected.rotation,
+                          (n) => changeMotif((m) => ({ ...m, rotation: n })),
+                          -36000,
+                          36000,
+                          1,
+                          '°',
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {['Position X', 'Position Y', 'Motivbreite', 'Drehung'].map((label) => (
+                          <label className="field" key={label}>
+                            <span>
+                              {label === 'Position X' ? 'X' : label === 'Position Y' ? 'Y' : label}
+                            </span>
+                            <input aria-label={label} value="" placeholder="—" readOnly />
+                            <small>{label === 'Drehung' ? '°' : 'cm'}</small>
+                          </label>
+                        ))}
+                      </>
+                    )}
+                  </fieldset>
+                }
+              />
             ) : (
               <div className="loading">Projekt laden…</div>
             )
@@ -881,41 +941,6 @@ export function App() {
                     <>
                       <fieldset disabled={selected.locked}>
                         <div className="fieldGrid">
-                          {editNumber(
-                            'Position X',
-                            selected.xMm / 10,
-                            (n) => changeMotif((m) => ({ ...m, xMm: cmToMm(n) })),
-                            -100,
-                            100,
-                          )}
-                          {editNumber(
-                            'Position Y',
-                            selected.yMm / 10,
-                            (n) => changeMotif((m) => ({ ...m, yMm: cmToMm(n) })),
-                            -100,
-                            100,
-                          )}
-                          {editNumber(
-                            'Motivbreite',
-                            selected.widthMm / 10,
-                            (n) =>
-                              changeMotif((m) => ({
-                                ...m,
-                                widthMm: cmToMm(n),
-                                heightMm: (cmToMm(n) * m.heightMm) / m.widthMm,
-                              })),
-                            0.2,
-                            100,
-                          )}
-                          {editNumber(
-                            'Drehung',
-                            selected.rotation,
-                            (n) => changeMotif((m) => ({ ...m, rotation: n })),
-                            -36000,
-                            36000,
-                            1,
-                            '°',
-                          )}
                           {editNumber(
                             'Deckkraft',
                             selected.opacity * 100,

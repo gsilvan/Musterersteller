@@ -56,11 +56,15 @@ export function ViewToolbar({
   fitLabel,
   children,
   dimensions,
+  showTools = true,
+  menuOnly = false,
 }: {
   controls: ReturnType<typeof useWorkspaceView>;
-  fitLabel: string;
+  fitLabel?: string;
   children?: ReactNode;
   dimensions?: ReactNode;
+  showTools?: boolean;
+  menuOnly?: boolean;
 }) {
   const [calibration, setCalibration] = useState(false);
   const [measured, setMeasured] = useState('5');
@@ -68,37 +72,10 @@ export function ViewToolbar({
   const value = Number(measured.replace(',', '.'));
   return (
     <>
-      <div className="viewToolbar" aria-label="Ansicht">
-        <div className="toolGroup">
-          <button
-            aria-label="Auswählen"
-            aria-pressed={!controls.hand}
-            title="Auswählen"
-            onClick={() => controls.setHand(false)}
-          >
-            ↖
-          </button>
-          <button
-            aria-label="Ansicht verschieben"
-            aria-pressed={controls.hand}
-            title="Verschieben · Leertaste halten"
-            onClick={() => controls.setHand(!controls.hand)}
-          >
-            ✥
-          </button>
-        </div>
-        <div className="toolGroup">
-          <button aria-label="Verkleinern" onClick={() => controls.zoom(1 / 1.2)}>
-            −
-          </button>
-          <output aria-label="Zoom">
-            {Math.round((controls.view.scale / BASE_SCALE) * 100)} %
-          </output>
-          <button aria-label="Vergrößern" onClick={() => controls.zoom(1.2)}>
-            +
-          </button>
-        </div>
-        <button onClick={() => controls.fit()}>{fitLabel}</button>
+      <div className={menuOnly ? 'viewMenuOnly' : 'viewToolbar'} aria-label="Ansicht">
+        {showTools && <ViewTools controls={controls} />}
+        {!menuOnly && <ZoomControls controls={controls} />}
+        {fitLabel && <button onClick={() => controls.fit()}>{fitLabel}</button>}
         <details className="viewMenu">
           <summary>Ansicht</summary>
           <div className="menuPanel">
@@ -145,5 +122,42 @@ export function ViewToolbar({
         </Dialog>
       )}
     </>
+  );
+}
+
+export function ViewTools({ controls }: { controls: ReturnType<typeof useWorkspaceView> }) {
+  return (
+    <div className="toolGroup">
+      <button
+        aria-label="Auswählen"
+        aria-pressed={!controls.hand}
+        title="Auswählen"
+        onClick={() => controls.setHand(false)}
+      >
+        ↖
+      </button>
+      <button
+        aria-label="Ansicht verschieben"
+        aria-pressed={controls.hand}
+        title="Verschieben · Leertaste halten"
+        onClick={() => controls.setHand(!controls.hand)}
+      >
+        ✥
+      </button>
+    </div>
+  );
+}
+
+export function ZoomControls({ controls }: { controls: ReturnType<typeof useWorkspaceView> }) {
+  return (
+    <div className="toolGroup">
+      <button aria-label="Verkleinern" onClick={() => controls.zoom(1 / 1.2)}>
+        −
+      </button>
+      <output aria-label="Zoom">{Math.round((controls.view.scale / BASE_SCALE) * 100)} %</output>
+      <button aria-label="Vergrößern" onClick={() => controls.zoom(1.2)}>
+        +
+      </button>
+    </div>
   );
 }

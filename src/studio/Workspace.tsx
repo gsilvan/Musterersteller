@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Rulers } from './Rulers';
 import { Editor } from './Editor';
 import { PatternSurface } from './PatternSurface';
 import { useStudio } from './store';
-import { useWorkspaceView, ViewToolbar } from './WorkspaceView';
+import { useWorkspaceView, ViewToolbar, ViewTools, ZoomControls } from './WorkspaceView';
 
 const cm = (mm: number) =>
   new Intl.NumberFormat('de-DE', { maximumFractionDigits: 2 }).format(mm / 10);
-export function Workspace() {
+export function Workspace({ transformations }: { transformations: ReactNode }) {
   const project = useStudio((s) => s.project);
   const controls = useWorkspaceView('pattern', project.sheetWidthMm, project.sheetHeightMm);
   const { host, size, view, onView: setView, hand } = controls;
@@ -25,24 +25,34 @@ export function Workspace() {
   const label = `Tuch · ${cm(project.sheetWidthMm)} × ${cm(project.sheetHeightMm)} cm`;
   return (
     <div className="patternWorkspace">
-      <ViewToolbar
-        controls={controls}
-        fitLabel="Tuch einpassen"
-        dimensions={`Kachel ${cm(project.tileWidthMm)} × ${cm(project.tileHeightMm)} cm`}
+      <div
+        className="editorTools"
+        role="toolbar"
+        aria-label="Bearbeitungswerkzeuge"
+        aria-orientation="vertical"
       >
-        <button onClick={() => controls.fit(project.tileWidthMm, project.tileHeightMm)}>
-          Kachel einpassen
-        </button>
-        <label>
-          <input type="checkbox" checked={bounds} onChange={(e) => setBounds(e.target.checked)} />
-          Kachelgrenzen
-        </label>
-        <label>
-          <input type="checkbox" checked={sheet} onChange={(e) => setSheet(e.target.checked)} />
-          Tuchrahmen
-        </label>
-      </ViewToolbar>
+        <ViewTools controls={controls} />
+      </div>
+      <div className="transformToolbar" role="group" aria-label="Transformation">
+        {transformations}
+        <ViewToolbar showTools={false} controls={controls} menuOnly>
+          <button onClick={() => controls.fit(project.tileWidthMm, project.tileHeightMm)}>
+            Kachel einpassen
+          </button>
+          <label>
+            <input type="checkbox" checked={bounds} onChange={(e) => setBounds(e.target.checked)} />
+            Kachelgrenzen
+          </label>
+          <label>
+            <input type="checkbox" checked={sheet} onChange={(e) => setSheet(e.target.checked)} />
+            Tuchrahmen
+          </label>
+        </ViewToolbar>
+      </div>
       <div className="ruledWorkspace">
+        <div className="workspaceZoom" role="group" aria-label="Zoomsteuerung">
+          <ZoomControls controls={controls} />
+        </div>
         <Rulers host={host} view={view} {...size} />
         <div
           className="canvasViewport"

@@ -34,6 +34,46 @@ try {
       },
       { x, y },
     );
+  const fitSheet = async () => {
+    // Set up geometry scenarios using the editor's zoom and pan interactions.
+    const target = await page.locator('.canvasViewport').evaluate(async (el) => {
+      const { fitView } = await import('/src/studio/viewport.ts');
+      const { useStudio } = await import('/src/studio/store.ts');
+      const p = useStudio.getState().project;
+      const rect = el.getBoundingClientRect();
+      const fit = fitView(rect.width, rect.height, p.sheetWidthMm, p.sheetHeightMm);
+      el.querySelector('.upper-canvas').dispatchEvent(
+        new WheelEvent('wheel', {
+          bubbles: true,
+          cancelable: true,
+          clientX: rect.x + rect.width / 2,
+          clientY: rect.y + rect.height / 2,
+          deltaY: -Math.log(fit.scale / Number(el.dataset.scale)) / 0.0015,
+        }),
+      );
+      return fit;
+    });
+    await page.waitForFunction(
+      (scale) =>
+        Math.abs(Number(document.querySelector('.canvasViewport').dataset.scale) - scale) < 0.0001,
+      target.scale,
+    );
+    const pan = await page.locator('.canvasViewport').evaluate((el, target) => {
+      const rect = el.getBoundingClientRect();
+      return {
+        x: rect.x + rect.width / 2,
+        y: rect.y + rect.height / 2,
+        dx: target.x - Number(el.dataset.offsetX),
+        dy: target.y - Number(el.dataset.offsetY),
+      };
+    }, target);
+    await page.getByRole('button', { name: 'Ansicht verschieben', exact: true }).click();
+    await page.mouse.move(pan.x, pan.y);
+    await page.mouse.down();
+    await page.mouse.move(pan.x + pan.dx, pan.y + pan.dy, { steps: 4 });
+    await page.mouse.up();
+    await page.getByRole('button', { name: 'Auswählen', exact: true }).click();
+  };
   const drag = async (x, y, dx, dy, cancel = false) => {
     const p = await point(x, y),
       end = await point(x + dx, y + dy);
@@ -130,7 +170,7 @@ try {
   assert.deepEqual((await state()).project, cameraProject);
   assert.ok(originalTile.equals(await download('Kachel PNG')), 'Camera changed exported tile');
   await page.getByRole('button', { name: 'Auswählen', exact: true }).click();
-  await page.getByRole('button', { name: 'Tuch einpassen', exact: true }).click();
+  await fitSheet();
   await page.locator('.viewMenu summary').click();
   await page.getByLabel('Tuchrahmen', { exact: true }).check();
   await page.getByRole('checkbox', { name: 'Kachelgrenzen', exact: true }).check();
@@ -138,7 +178,7 @@ try {
   await page.getByLabel('Gemessene Länge (cm)').fill('4,5');
   await page.getByRole('button', { name: 'Originalgröße anzeigen' }).click();
   await page.locator('.viewMenu summary').click();
-  await page.getByRole('button', { name: 'Tuch einpassen', exact: true }).click();
+  await fitSheet();
   // Transform a repetition outside the original tile. Only release writes history.
   let before = await state();
   const start = await point(150, 50),
@@ -402,7 +442,7 @@ try {
       })),
     });
   });
-  await page.getByRole('button', { name: 'Tuch einpassen', exact: true }).click();
+  await fitSheet();
   // A locked group member must stay unchanged even when another crosses a tile edge.
   await page.evaluate(async () => {
     const { useStudio } = await import('/src/studio/store.ts');
@@ -468,7 +508,7 @@ try {
   assert.equal((await state()).past, touchState.past);
   if (process.env.SCREENSHOT) {
     await page.setViewportSize({ width: 1440, height: 1000 });
-    await page.getByRole('button', { name: 'Tuch einpassen', exact: true }).click();
+    await fitSheet();
     await page.screenshot({ path: process.env.SCREENSHOT });
   }
   // The fallback paints the same world coordinates without WebGL or WebGPU.
