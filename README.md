@@ -6,7 +6,7 @@ The static landing page is at `/`. The pattern editor opens at `/muster/`, the p
 
 ## Development
 
-Node 20.19+ is required.
+Node 22.13+ (22.x), 24.x, or 26+ is required. CI uses Node 26.13.0.
 
 ```sh
 npm ci

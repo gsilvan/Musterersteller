@@ -13,24 +13,30 @@ export async function readAsset(file: File): Promise<Asset> {
       import('pdfjs-dist/build/pdf.worker.min.mjs?url'),
     ]);
     GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
-    const pdf = await getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
-    const choice =
-      pdf.numPages > 1 ? window.prompt(`PDF hat ${pdf.numPages} Seiten. Welche Seite?`, '1') : '1';
-    const number = Number(choice);
-    if (!Number.isInteger(number) || number < 1 || number > pdf.numPages)
-      throw new Error('Ungültige PDF-Seite.');
-    const page = await pdf.getPage(number);
-    const viewport = page.getViewport({ scale: 300 / 72 });
-    if (viewport.width * viewport.height > 40_000_000)
-      throw new Error('PDF-Seite ist zu groß zum Import.');
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.ceil(viewport.width);
-    canvas.height = Math.ceil(viewport.height);
-    const context = canvas.getContext('2d');
-    if (!context) throw new Error('PDF-Seite kann nicht gezeichnet werden.');
-    await page.render({ canvasContext: context, canvas, viewport }).promise;
-    dataUrl = canvas.toDataURL('image/png');
-    await pdf.destroy();
+    const loadingTask = getDocument({ data: new Uint8Array(await file.arrayBuffer()) });
+    try {
+      const pdf = await loadingTask.promise;
+      const choice =
+        pdf.numPages > 1
+          ? window.prompt(`PDF hat ${pdf.numPages} Seiten. Welche Seite?`, '1')
+          : '1';
+      const number = Number(choice);
+      if (!Number.isInteger(number) || number < 1 || number > pdf.numPages)
+        throw new Error('Ungültige PDF-Seite.');
+      const page = await pdf.getPage(number);
+      const viewport = page.getViewport({ scale: 300 / 72 });
+      if (viewport.width * viewport.height > 40_000_000)
+        throw new Error('PDF-Seite ist zu groß zum Import.');
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.ceil(viewport.width);
+      canvas.height = Math.ceil(viewport.height);
+      const context = canvas.getContext('2d');
+      if (!context) throw new Error('PDF-Seite kann nicht gezeichnet werden.');
+      await page.render({ canvasContext: context, canvas, viewport }).promise;
+      dataUrl = canvas.toDataURL('image/png');
+    } finally {
+      await loadingTask.destroy();
+    }
   } else if (file.type === 'image/svg+xml') {
     let svg = await file.text();
     if (/(?:href|url\()\s*=?[\s"']*(?:https?:|data:|\/\/)/i.test(svg))

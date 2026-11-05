@@ -362,7 +362,7 @@ try {
             height: viewport.height,
           });
         }
-        await pdf.destroy();
+        await pdf.loadingTask.destroy();
         return result;
       },
       [...bytes],

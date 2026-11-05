@@ -161,7 +161,7 @@ try {
     canvas.height = Math.ceil(viewport.height);
     await p.render({ canvas, canvasContext: canvas.getContext('2d'), viewport }).promise;
     const png = canvas.toDataURL().split(',')[1];
-    await pdf.destroy();
+    await pdf.loadingTask.destroy();
     return { strings, png };
   }, exports.pdf);
   assert.equal(textCheck.strings.trim(), '');

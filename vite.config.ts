@@ -6,7 +6,7 @@ export default defineConfig({
   base: process.env.VITE_BASE ?? '/',
   build: {
     outDir: 'dist',
-    rollupOptions: {
+    rolldownOptions: {
       input: {
         home: resolve(import.meta.dirname, 'index.html'),
         impressum: resolve(import.meta.dirname, 'impressum/index.html'),

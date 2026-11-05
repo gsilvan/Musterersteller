@@ -9,7 +9,7 @@
 
 ## Build, Test, and Development
 
-Use Node.js 20.19 or newer and npm:
+Use Node.js 22.13+ (22.x), 24.x, or 26+ and npm. CI uses Node.js 26.13.0:
 
 ```sh
 npm ci                 # Install locked dependencies
