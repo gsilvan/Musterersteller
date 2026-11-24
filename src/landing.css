@@ -67,10 +67,6 @@ a:focus-visible {
   text-decoration: underline;
 }
 .hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
-  gap: clamp(40px, 6vw, 90px);
-  align-items: center;
   padding-block: 72px 82px;
 }
 .eyebrow {
@@ -149,28 +145,6 @@ h3 {
   color: var(--muted);
   font-size: 12px;
 }
-.heroExample {
-  margin: 0;
-  padding: 10px;
-  border: 1px solid var(--line);
-  background: #f9fafb;
-}
-.heroPattern {
-  height: clamp(340px, 37vw, 500px);
-  overflow: hidden;
-  background: #f5d928;
-}
-.heroPattern img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.heroExample figcaption {
-  padding: 9px 3px 1px;
-  color: var(--muted);
-  font-size: 12px;
-}
 .contentSection {
   padding-block: 70px;
   border-top: 1px solid var(--line);
@@ -183,8 +157,7 @@ h3 {
   margin-bottom: 0;
   color: #4d5967;
 }
-.steps,
-.exampleGrid {
+.steps {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 25px;
@@ -205,24 +178,6 @@ h3 {
   max-width: 58ch;
   margin-bottom: 0;
   color: #4d5967;
-}
-.examplesSection {
-  background: #fff;
-}
-.exampleGrid figure {
-  margin: 0;
-}
-.exampleGrid img {
-  display: block;
-  width: 100%;
-  height: clamp(190px, 20vw, 235px);
-  object-fit: cover;
-  border: 1px solid var(--line);
-}
-.exampleGrid figcaption {
-  padding-top: 10px;
-  font-size: 13px;
-  font-weight: 600;
 }
 .useSection {
   display: grid;
@@ -298,12 +253,7 @@ h3 {
 }
 @media (max-width: 800px) {
   .hero {
-    grid-template-columns: 1fr;
-    gap: 36px;
     padding-block: 50px 60px;
-  }
-  .heroPattern {
-    height: 350px;
   }
   .useSection {
     grid-template-columns: 1fr;
@@ -333,19 +283,12 @@ h3 {
   .hero {
     padding-block: 42px 55px;
   }
-  .heroPattern {
-    height: 280px;
-  }
   .contentSection {
     padding-block: 50px;
   }
-  .steps,
-  .exampleGrid {
+  .steps {
     grid-template-columns: 1fr;
     gap: 20px;
-  }
-  .exampleGrid img {
-    height: 210px;
   }
   .legalContent {
     width: min(100% - 32px, 760px);

@@ -3,7 +3,7 @@
 ## Project Structure
 
 - `src/studio/` contains the application, editor, preview, project model, persistence, file import/export, and styles.
-- `src/backgrounds/` and `public/banderole/` hold built-in pattern and packaging artwork.
+- `public/banderole/` holds built-in packaging artwork.
 - `src/studio/model.test.ts` and `src/*test.js` contain Vitest tests; `scripts/smoke.mjs` runs browser checks.
 - `.github/workflows/` defines validation and GitHub Pages deployment.
 

@@ -422,22 +422,6 @@ h2 {
 .settingsSection {
   border-bottom: 1px solid var(--line);
 }
-.backgrounds {
-  display: flex;
-  gap: 6px;
-  overflow: auto;
-  padding: 10px 0;
-}
-.backgrounds button {
-  padding: 0;
-  flex: none;
-  overflow: hidden;
-}
-.backgrounds img {
-  width: 42px;
-  height: 42px;
-  object-fit: cover;
-}
 .textField {
   display: block;
   color: var(--muted);

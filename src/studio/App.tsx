@@ -41,9 +41,6 @@ import {
   makePackagingDocument,
   packagingTypes,
 } from './packagingTemplates';
-const backgrounds = Object.values(
-  import.meta.glob('../backgrounds/*.png', { eager: true, query: '?url', import: 'default' }),
-) as string[];
 type EditorTab = 'pattern' | 'packaging';
 const routeInfo = {
   pattern: {
@@ -1008,30 +1005,6 @@ export function App() {
                     onChange={(e) => void upload(e, 'background')}
                   />
                 </label>
-                <div className="backgrounds">
-                  {backgrounds.map((src, i) => (
-                    <button
-                      key={src}
-                      title={`Vorlage ${i + 1}`}
-                      disabled={busy}
-                      onClick={() =>
-                        void run(async () => {
-                          const blob = await (await fetch(src)).blob();
-                          const a = await readAsset(
-                            new File([blob], `Design ${i + 1}.png`, { type: 'image/png' }),
-                          );
-                          update((p) => ({
-                            ...p,
-                            assets: [...p.assets, a],
-                            backgroundAssetId: a.id,
-                          }));
-                        })
-                      }
-                    >
-                      <img src={src} alt={`Hintergrund ${i + 1}`} />
-                    </button>
-                  ))}
-                </div>
                 {project.backgroundAssetId && (
                   <button onClick={() => update((p) => ({ ...p, backgroundAssetId: null }))}>
                     Hintergrundbild entfernen

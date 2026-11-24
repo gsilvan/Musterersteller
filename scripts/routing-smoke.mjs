@@ -22,9 +22,11 @@ try {
     await page.locator('link[rel="canonical"]').getAttribute('href'),
     'https://musterersteller.de/',
   );
-  assert.ok(await page.locator('.heroExample img').evaluate((image) => image.naturalWidth > 0));
+  assert.equal(await page.locator('main img').count(), 0);
   await page.getByRole('link', { name: 'Muster erstellen', exact: true }).last().click();
   await page.locator('.upper-canvas').waitFor();
+  assert.equal(await page.locator('.backgrounds').count(), 0);
+  assert.equal(await page.getByLabel('Hintergrundbild hochladen').count(), 1);
   assert.equal(new URL(page.url()).pathname, new URL('muster/', baseUrl).pathname);
 
   await page.getByRole('link', { name: 'Verpackungen', exact: true }).click();
