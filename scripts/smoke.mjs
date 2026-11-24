@@ -98,6 +98,41 @@ try {
     await page.getByRole('button', { name: 'Schließen', exact: true }).click();
     return bytes;
   };
+  const pngCenterPixel = (bytes) =>
+    page.evaluate(async (data) => {
+      const bitmap = await createImageBitmap(
+        new Blob([Uint8Array.from(data)], { type: 'image/png' }),
+      );
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 1;
+      const context = canvas.getContext('2d');
+      context.drawImage(bitmap, -Math.floor(bitmap.width / 2), -Math.floor(bitmap.height / 2));
+      bitmap.close();
+      return Array.from(context.getImageData(0, 0, 1, 1).data);
+    }, Array.from(bytes));
+  const pdfCenterPixel = (bytes) =>
+    page.evaluate(async (data) => {
+      const { getDocument, GlobalWorkerOptions } =
+        await import('/node_modules/pdfjs-dist/build/pdf.mjs');
+      GlobalWorkerOptions.workerSrc = '/node_modules/pdfjs-dist/build/pdf.worker.mjs';
+      const loadingTask = getDocument({ data: Uint8Array.from(data) });
+      const pdfDocument = await loadingTask.promise;
+      try {
+        const firstPage = await pdfDocument.getPage(1);
+        const viewport = firstPage.getViewport({ scale: 0.1 });
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.ceil(viewport.width);
+        canvas.height = Math.ceil(viewport.height);
+        const context = canvas.getContext('2d');
+        await firstPage.render({ canvasContext: context, canvas, viewport }).promise;
+        return Array.from(
+          context.getImageData(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2), 1, 1)
+            .data,
+        );
+      } finally {
+        await loadingTask.destroy();
+      }
+    }, Array.from(bytes));
   await page.goto(new URL('muster/', process.env.APP_URL || 'http://127.0.0.1:5173/').href);
   await page.locator('.upper-canvas').waitFor();
   assert.equal(await page.getByText('Automatisch anordnen', { exact: true }).count(), 0);
@@ -113,6 +148,16 @@ try {
     [(await state()).project.sheetWidthMm, (await state()).project.sheetHeightMm],
     [300, 300],
   );
+  const initialBackground = (await state()).project.backgroundColor;
+  await page.getByLabel('Hintergrundfarbe', { exact: true }).fill('#2468ac');
+  assert.deepEqual(await pngCenterPixel(await download('Kachel PNG')), [36, 104, 172, 255]);
+  assert.deepEqual(await pngCenterPixel(await download('Tuch PNG')), [36, 104, 172, 255]);
+  const pdfBackground = await pdfCenterPixel(await download('Tuch PDF'));
+  assert.ok(
+    pdfBackground.every((channel, index) => Math.abs(channel - [36, 104, 172, 255][index]) <= 1),
+    `Tuch PDF background color: ${pdfBackground.join(', ')}`,
+  );
+  await page.getByLabel('Hintergrundfarbe', { exact: true }).fill(initialBackground);
   // Use a 10 cm repeat tile below for repeat-interaction geometry scenarios.
   await field('Kachelbreite', 10);
   await field('Kachelhöhe', 10);

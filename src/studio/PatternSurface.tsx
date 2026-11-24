@@ -71,7 +71,7 @@ export function PatternSurface({
         Math.max(48, state.current.view.scale * Math.min(devicePixelRatio || 1, 2) * 25.4),
       );
       try {
-        await renderTile(project, ppi, false, undefined, tile);
+        await renderTile(project, ppi, undefined, tile);
         if (disposed) return;
         if (version === revision) {
           tileWidthMm = project.tileWidthMm;

@@ -49,7 +49,6 @@ function assetFor(p: Project, id: string | null) {
 export async function renderTile(
   p: Project,
   ppi: number,
-  transparent = false,
   signal?: AbortSignal,
   target?: HTMLCanvasElement,
 ): Promise<HTMLCanvasElement> {
@@ -61,10 +60,8 @@ export async function renderTile(
   const ctx = canvas.getContext('2d')!;
   ctx.globalAlpha = 1;
   ctx.clearRect(0, 0, w, h);
-  if (!transparent) {
-    ctx.fillStyle = p.backgroundColor;
-    ctx.fillRect(0, 0, w, h);
-  }
+  ctx.fillStyle = p.backgroundColor;
+  ctx.fillRect(0, 0, w, h);
   const background = assetFor(p, p.backgroundAssetId);
   if (background) {
     const img = await loadImage(background);
@@ -114,7 +111,7 @@ export async function renderSheet(
     ctx = sheet.getContext('2d')!;
   ctx.fillStyle = p.backgroundColor;
   ctx.fillRect(0, 0, w, h);
-  const tile = await renderTile(p, ppi, false, signal);
+  const tile = await renderTile(p, ppi, signal);
   for (let y = 0; y < h; y += tile.height) {
     signal?.throwIfAborted();
     for (let x = 0; x < w; x += tile.width) ctx.drawImage(tile, x, y);

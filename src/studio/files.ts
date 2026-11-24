@@ -78,7 +78,7 @@ export async function exportPng(
 ) {
   const canvas =
     kind === 'tile'
-      ? await renderTile(p, ppi, true, signal)
+      ? await renderTile(p, ppi, signal)
       : kind === 'sheet'
         ? await renderSheet(p, ppi, signal)
         : await renderPackaging(p, kind, ppi);
